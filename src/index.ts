@@ -124,3 +124,6 @@ export class Controller extends Request {
         })
     }
 }
+export function set_host(host: string) {
+    config.host = host;
+}
