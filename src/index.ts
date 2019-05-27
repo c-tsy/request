@@ -11,6 +11,7 @@ export class Request {
      */
     req: any = req;
     isRPC: boolean = false;
+    prefix: string = "";
     constructor(name) {
         this.name = name;
     }
@@ -27,7 +28,9 @@ export class Request {
         }
     }
     protected get_url(method: string) {
-        return this.isRPC ? [this.name, method].join('/') : [this.host || config.host || window.location.host, this.name, method].join('/')
+        let p = [this.name, method]
+        if(this.prefix){p.unshift(this.prefix)}
+        return (this.isRPC ? this.host || config.host || window.location.host : '') + p.join('/');
     }
     /**
      * Post请求
@@ -48,6 +51,15 @@ export class Request {
         })
     }
 }
+/**
+ * 基础控制器
+ */
+export class BaseController extends Request { 
+    pk: string = ""
+}
+/**
+ * 标准控制器
+ */
 export class Controller extends Request {
     pk: string = ""
     /**
