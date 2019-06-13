@@ -57,7 +57,7 @@ export class Request {
     protected get_url(method: string) {
         let p = [this.name, method]
         if (this.prefix) { p.unshift(this.prefix) }
-        return (this.isRPC ? this.host || config.host || window.location.host : '') + p.join('/');
+        return (!this.isRPC ? this.host || config.host || window.location.host : '') + p.join('/');
     }
     getHookName(method: string) {
         let p = ['_req', this.name, method]
