@@ -1,6 +1,23 @@
 import axios from 'axios';
+import * as store from 'store'
+var Token = store.get('token')
 import Hook, { HookWhen } from '@ctsy/hook';
 const req = axios.create({ withCredentials: true })
+// 读取并设置token
+req.interceptors.response.use(response => {
+    if (response.headers['token']) {
+        Token = response.headers['token'];
+        store.set('token', Token)
+    }
+    return response.data
+})
+/**
+ * 封装Token
+ */
+req.interceptors.request.use((req) => {
+    req.headers['token'] = Token;
+    return req;
+})
 const config = {
     host: ''
 }
