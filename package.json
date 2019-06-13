@@ -1,6 +1,6 @@
 {
   "name": "@ctsy/request",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,6 +12,7 @@
   "author": "CastleMY <490523604@qq.com>",
   "license": "MIT",
   "dependencies": {
+    "@ctsy/hook": "^0.0.2",
     "axios": "^0.19.0"
   }
 }
