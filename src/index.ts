@@ -9,7 +9,7 @@ req.interceptors.response.use(response => {
         Token = response.headers['token'];
         store.set('token', Token)
     }
-    return response.data
+    return response
 })
 /**
  * 封装Token
