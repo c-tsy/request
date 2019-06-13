@@ -1,16 +1,26 @@
 import axios from 'axios';
+import Hook, { HookWhen } from '@ctsy/hook';
 const req = axios.create({ withCredentials: true })
 const config = {
     host: ''
 }
 export class Request {
+    /**
+     * 类名称
+     */
     name: string = "";
+    /**
+     * 特定某个请求地址
+     */
     host: string = "";
     /**
      * 请求对象，若需要使用WebSocket请求请替换成WebSocket对象
      */
     req: any = req;
     isRPC: boolean = false;
+    /**
+     * 请求的前缀
+     */
     prefix: string = "";
     constructor(name) {
         this.name = name;
@@ -29,32 +39,38 @@ export class Request {
     }
     protected get_url(method: string) {
         let p = [this.name, method]
-        if(this.prefix){p.unshift(this.prefix)}
+        if (this.prefix) { p.unshift(this.prefix) }
         return (this.isRPC ? this.host || config.host || window.location.host : '') + p.join('/');
+    }
+    getHookName(method: string) {
+        let p = ['_req', this.name, method]
+        if (this.prefix) { p.unshift(this.prefix) }
+        return p.join('/');
     }
     /**
      * Post请求
      * @param method 
      * @param data 
      */
-    _post(method: string, data: any, opt: Object = {}) {
-        return this.req.post(this.get_url(method), data, opt).then((v) => {
-            if (v.data) {
-                if (v.data.c == 200) {
-                    return v.data.d;
-                } else {
-                    throw new Error('string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c))
-                }
+    async _post(method: string, data: any, opt: Object = {}) {
+        await Hook.emit(this.getHookName(method), HookWhen.Before, {}, data);
+        let v = await this.req.post(this.get_url(method), data, opt)
+        await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
+        if (v.data) {
+            if (v.data.c == 200) {
+                return v.data.d;
             } else {
-                throw new Error(v.headers.state)
+                throw new Error('string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c))
             }
-        })
+        } else {
+            throw new Error(v.headers.state)
+        }
     }
 }
 /**
  * 基础控制器
  */
-export class BaseController extends Request { 
+export class BaseController extends Request {
     pk: string = ""
 }
 /**
