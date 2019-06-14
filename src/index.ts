@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as store from 'store'
 var Token = store.get('token')
+
 import Hook, { HookWhen } from '@ctsy/hook';
 const req = axios.create({ withCredentials: true })
 // 读取并设置token
