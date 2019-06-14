@@ -15,7 +15,8 @@ req.interceptors.response.use(response => {
  * 封装Token
  */
 req.interceptors.request.use((req) => {
-    req.headers['token'] = Token;
+    if (Token)
+        req.headers['token'] = Token;
     return req;
 })
 const config = {
