@@ -161,7 +161,11 @@ export class Controller extends Request {
      * @param W 
      * @param conf 
      */
-    search(W: Object = {}, conf: { N: number, P: number, Keyword: string, Sort?: string } = { N: 10, P: 1, Keyword: '' }) {
+    search(W: Object | any = {}, conf: { N: number, P: number, Keyword: string, Sort?: string } = { N: 10, P: 1, Keyword: '' }) {
+        if (W.P != void 0 && W.N != void 0 && W.Keyword != void 0) {
+            conf = W;
+            W = W.W;
+        }
         return this._post('search', {
             W,
             Keyword: conf.Keyword || "",
