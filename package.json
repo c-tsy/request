@@ -1,6 +1,6 @@
 {
   "name": "@ctsy/request",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -12,13 +12,13 @@
   "author": "CastleMY <490523604@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "@ctsy/hook": "^0.0.5",
-    "axios": "^0.19.0",
-    "store": "^2.0.12",
-    "ts-loader": "^6.0.4",
-    "typescript": "^3.5.3",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "@ctsy/hook": "^0.0",
+    "axios": "^0.19",
+    "store": "^2.0",
+    "ts-loader": "^6.0",
+    "typescript": "^3.5",
+    "webpack": "^4.39",
+    "webpack-cli": "^3.3"
   },
   "scripts": {
     "prepublish": "rm -rf dist && tsc && webpack --mode production --config build/config.js src/index.ts"
