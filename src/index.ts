@@ -74,11 +74,12 @@ export class Request {
     async _post(method: string, data: any, opt: Object = {}) {
         await Hook.emit(this.getHookName(method), HookWhen.Before, {}, data);
         let v = await this.req.post(this.get_url(method), data, opt)
-        await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
         if (v.data) {
             if (v.data.c == 200) {
+                await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
                 return v.data.d;
             } else {
+                await Hook.emit(this.getHookName(method), HookWhen.Error, {}, v)
                 throw new Error('string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c))
             }
         } else {
