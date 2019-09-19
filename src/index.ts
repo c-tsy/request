@@ -83,7 +83,7 @@ export class Request {
             let ts = Date.now() - t;
             if (window._hmt) {
                 //统计请求时间
-                window._hmt.push(['_trackEvent', 'request', this.get_url(method), ts]);
+                window._hmt.push(['_trackEvent', 'request', this.get_url(method), 'time', ts]);
             }
             if (v.data) {
                 if (v.data.c == 200) {
