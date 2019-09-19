@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as store from 'store'
 var Token = store.get('token')
-
+declare let window: any;
 import Hook, { HookWhen } from '@ctsy/hook';
 const req = axios.create({ withCredentials: true })
 // 读取并设置token
@@ -56,9 +56,10 @@ export class Request {
             throw new Error('错误的请求对象')
         }
     }
-    protected get_url(method: string) {
+    protected get_url(method: string, host: boolean = true) {
         let p = [this.name, method]
         if (this.prefix) { p.unshift(this.prefix) }
+        if (!host) { return p.join('/') }
         return (!this.isRPC ? this.host || config.host || window.location.host : '') + p.join('/');
     }
     getHookName(method: string) {
@@ -72,18 +73,34 @@ export class Request {
      * @param data 
      */
     async _post(method: string, data: any, opt: Object = {}) {
+        let t = Date.now(), v;
         await Hook.emit(this.getHookName(method), HookWhen.Before, {}, data);
-        let v = await this.req.post(this.get_url(method), data, opt)
-        if (v.data) {
-            if (v.data.c == 200) {
-                await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
-                return v.data.d;
-            } else {
-                await Hook.emit(this.getHookName(method), HookWhen.Error, {}, v)
-                throw new Error('string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c))
+        try {
+            v = await this.req.post(this.get_url(method), data, opt)
+        } catch (error) {
+            throw new Error;
+        } finally {
+            let ts = Date.now() - t;
+            if (window._hmt) {
+                //统计请求时间
+                window._hmt.push(['_trackEvent', 'request', this.get_url(method), ts]);
             }
-        } else {
-            throw new Error(v.headers.state)
+            if (v.data) {
+                if (v.data.c == 200) {
+                    await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
+                    return v.data.d;
+                } else {
+                    await Hook.emit(this.getHookName(method), HookWhen.Error, {}, v)
+                    let msg = 'string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c);
+                    if (window._hmt) {
+                        //统计请求时间
+                        window._hmt.push(['_trackEvent', 'request/error', this.get_url(method), msg, ts]);
+                    }
+                    throw new Error(msg)
+                }
+            } else {
+                throw new Error(v.headers.state)
+            }
         }
     }
 }
