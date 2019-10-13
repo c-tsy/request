@@ -81,10 +81,7 @@ export class Request {
             throw new Error;
         } finally {
             let ts = Date.now() - t;
-            if (window._hmt) {
-                //统计请求时间
-                window._hmt.push(['_trackEvent', 'request', this.get_url(method), 'time', ts]);
-            }
+            hmt(['_trackEvent', 'request', this.get_url(method), 'time', ts])
             if (v.data) {
                 if (v.data.c == 200) {
                     await Hook.emit(this.getHookName(method), HookWhen.After, {}, v);
@@ -92,16 +89,25 @@ export class Request {
                 } else {
                     await Hook.emit(this.getHookName(method), HookWhen.Error, {}, v)
                     let msg = 'string' == typeof v.data.e ? v.data.e : (v.data.e.m || v.data.c);
-                    if (window._hmt) {
-                        //统计请求时间
-                        window._hmt.push(['_trackEvent', 'request/error', this.get_url(method), msg, ts]);
-                    }
+                    hmt(['_trackEvent', 'request/error', this.get_url(method), msg, ts])
                     throw new Error(msg)
                 }
             } else {
                 throw new Error(v.headers.state)
             }
         }
+    }
+}
+/**
+ * 统计数据汇报
+ */
+export function hmt(data: any) {
+    try {
+        if (window && window._hmt) {
+            window._hmt.push(data)
+        }
+    } catch (error) {
+
     }
 }
 /**
