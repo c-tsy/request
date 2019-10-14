@@ -1,6 +1,6 @@
 {
   "name": "@ctsy/request",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -14,7 +14,9 @@
   "dependencies": {
     "@ctsy/hook": "^0.0",
     "axios": "^0.19",
-    "store": "^2.0",
+    "store": "^2.0"
+  },
+  "devDependencies": {
     "ts-loader": "^6.0",
     "typescript": "^3.5",
     "webpack": "^4.39",
